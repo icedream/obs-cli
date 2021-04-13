@@ -12,8 +12,9 @@ import (
 )
 
 var (
-	host string
-	port uint32
+	host     string
+	port     uint32
+	password string
 
 	rootCmd = &cobra.Command{
 		Use:   "obs-cli",
@@ -38,13 +39,14 @@ func init() {
 	cobra.OnInitialize(connectOBS)
 	rootCmd.PersistentFlags().StringVar(&host, "host", "localhost", "host to connect to")
 	rootCmd.PersistentFlags().Uint32VarP(&port, "port", "p", 4444, "port to connect to")
+	rootCmd.PersistentFlags().StringVarP(&password, "password", "P", "", "password to connect with")
 }
 
 func connectOBS() {
 	// disable obsws logging
 	obsws.Logger = log.New(ioutil.Discard, "", log.LstdFlags)
 
-	client = &obsws.Client{Host: host, Port: int(port)}
+	client = &obsws.Client{Host: host, Port: int(port), Password: password}
 	if err := client.Connect(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
